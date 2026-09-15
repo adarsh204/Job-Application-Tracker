@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Applications · Job Application Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="app-shell">
+
+    <!-- ============ Sidebar navigation ============ -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <span class="brand-mark">JT</span>
+        <span class="brand-name">Job Tracker</span>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="index.html" class="nav-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+          Dashboard
+        </a>
+        <a href="applications.html" class="nav-link active">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3h6l1 3h4v14H4V6h4l1-3z"/><path d="M9 12h6M9 16h6"/></svg>
+          Applications
+        </a>
+        <a href="#" class="nav-link" id="sidebarAddBtn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>
+          Add Application
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        Track every application in one place.
+      </div>
+    </aside>
+
+    <!-- ============ Main content ============ -->
+    <main class="main-content">
+      <header class="page-header">
+        <div>
+          <h1>Applications</h1>
+          <p class="page-subtitle">Search, filter and manage everything you've applied to.</p>
+        </div>
+        <button class="btn btn-primary" id="openAddBtn">+ Add Application</button>
+      </header>
+
+      <div id="alertBox" class="alert-box" hidden></div>
+
+      <!-- Search & filter toolbar -->
+      <section class="toolbar">
+        <input type="search" id="searchCompany" class="input" placeholder="Search by company…" />
+        <input type="search" id="searchRole" class="input" placeholder="Search by job role…" />
+
+        <select id="filterStatus" class="input select">
+          <option value="">All statuses</option>
+          <option value="Applied">Applied</option>
+          <option value="Shortlisted">Shortlisted</option>
+          <option value="Interview">Interview</option>
+          <option value="Selected">Selected</option>
+          <option value="Rejected">Rejected</option>
+        </select>
+
+        <select id="filterJobType" class="input select">
+          <option value="">All job types</option>
+          <option value="Full-time">Full-time</option>
+          <option value="Internship">Internship</option>
+          <option value="Part-time">Part-time</option>
+        </select>
+
+        <input type="text" id="filterLocation" class="input" placeholder="Filter by location…" />
+
+        <select id="sortBy" class="input select">
+          <option value="applicationDate">Sort: Application date</option>
+          <option value="companyName">Sort: Company name</option>
+          <option value="interviewDate">Sort: Interview date</option>
+        </select>
+
+        <button class="btn btn-ghost" id="resetFiltersBtn" type="button">Reset</button>
+      </section>
+
+      <!-- Applications table -->
+      <section class="panel table-panel">
+        <div class="table-scroll">
+          <table class="app-table">
+            <thead>
+              <tr>
+                <th>Company</th>
+                <th>Job role</th>
+                <th>Location</th>
+                <th>Applied on</th>
+                <th>Status</th>
+                <th>Interview date</th>
+                <th class="col-actions">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="applicationsBody">
+              <tr><td colspan="7" class="empty-inline">Loading applications…</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div id="emptyState" class="empty-state" hidden>
+          <p class="empty-state-title">No applications yet</p>
+          <p class="empty-state-text">Start tracking your job search by adding your first application.</p>
+          <button class="btn btn-primary" id="emptyStateAddBtn">+ Add Application</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ============ Add / Edit Modal ============ -->
+  <div class="modal-overlay" id="formModalOverlay" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="formModalTitle">
+      <div class="modal-header">
+        <h2 id="formModalTitle">Add Application</h2>
+        <button class="modal-close" id="formModalClose" aria-label="Close">&times;</button>
+      </div>
+      <form id="applicationForm" class="modal-body" novalidate>
+        <input type="hidden" id="appId" />
+
+        <div class="form-row">
+          <label for="companyName">Company name *</label>
+          <input type="text" id="companyName" required maxlength="150" placeholder="e.g. Google" />
+          <span class="field-error" data-error-for="companyName"></span>
+        </div>
+
+        <div class="form-row">
+          <label for="jobRole">Job role *</label>
+          <input type="text" id="jobRole" required maxlength="150" placeholder="e.g. Software Engineer Intern" />
+          <span class="field-error" data-error-for="jobRole"></span>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-row">
+            <label for="location">Job location *</label>
+            <input type="text" id="location" required maxlength="150" placeholder="e.g. Bengaluru, India" />
+            <span class="field-error" data-error-for="location"></span>
+          </div>
+
+          <div class="form-row">
+            <label for="jobType">Job type *</label>
+            <select id="jobType" required>
+              <option value="">Select type</option>
+              <option value="Full-time">Full-time</option>
+              <option value="Internship">Internship</option>
+              <option value="Part-time">Part-time</option>
+            </select>
+            <span class="field-error" data-error-for="jobType"></span>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-row">
+            <label for="applicationDate">Application date *</label>
+            <input type="date" id="applicationDate" required />
+            <span class="field-error" data-error-for="applicationDate"></span>
+          </div>
+
+          <div class="form-row">
+            <label for="status">Status *</label>
+            <select id="status" required>
+              <option value="Applied">Applied</option>
+              <option value="Shortlisted">Shortlisted</option>
+              <option value="Interview">Interview</option>
+              <option value="Selected">Selected</option>
+              <option value="Rejected">Rejected</option>
+            </select>
+            <span class="field-error" data-error-for="status"></span>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <label for="interviewDate">Interview date <span class="optional">(optional)</span></label>
+          <input type="date" id="interviewDate" />
+          <span class="field-error" data-error-for="interviewDate"></span>
+        </div>
+
+        <div class="form-row">
+          <label for="jobUrl">Job URL <span class="optional">(optional)</span></label>
+          <input type="url" id="jobUrl" maxlength="500" placeholder="https://…" />
+          <span class="field-error" data-error-for="jobUrl"></span>
+        </div>
+
+        <div class="form-row">
+          <label for="notes">Notes <span class="optional">(optional)</span></label>
+          <textarea id="notes" rows="3" placeholder="Referral, recruiter contact, prep notes…"></textarea>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-ghost" id="cancelFormBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="submitFormBtn">Save Application</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============ View Details Modal ============ -->
+  <div class="modal-overlay" id="viewModalOverlay" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="viewModalTitle">
+      <div class="modal-header">
+        <h2 id="viewModalTitle">Application Details</h2>
+        <button class="modal-close" id="viewModalClose" aria-label="Close">&times;</button>
+      </div>
+      <div class="modal-body" id="viewModalBody">
+        <!-- Populated by JS -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-ghost" id="closeViewBtn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ Delete Confirmation Modal ============ -->
+  <div class="modal-overlay" id="deleteModalOverlay" hidden>
+    <div class="modal modal-small" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle">
+      <div class="modal-header">
+        <h2 id="deleteModalTitle">Delete application?</h2>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete this application? This action cannot be undone.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-ghost" id="cancelDeleteBtn">Cancel</button>
+        <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ Toast notification ============ -->
+  <div id="toast" class="toast" hidden></div>
+
+  <script src="js/api.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/applications.js"></script>
+</body>
+</html>
