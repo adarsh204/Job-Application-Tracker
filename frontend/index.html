@@ -13,10 +13,21 @@
 
     <!-- ============ Sidebar navigation ============ -->
     <aside class="sidebar">
-      <div class="sidebar-brand">
-        <span class="brand-mark">JT</span>
-        <span class="brand-name">Job Tracker</span>
-      </div>
+      <div class="sidebar-brand profile-box">
+        <label for="profilePhoto" class="profile-photo-label">
+           <img id="profileImage" class="profile-image" src="assets/default-profile.png" alt="Profile Photo">
+        </label>
+
+       <input type="file" id="profilePhoto" accept="image/*" hidden>
+
+      <input
+        type="text"
+        id="profileName"
+        class="profile-name"
+        placeholder="Your Name"
+        maxlength="30"
+       >
+</div>
       <nav class="sidebar-nav">
         <a href="index.html" class="nav-link active">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
@@ -83,5 +94,6 @@
   <script src="js/api.js"></script>
   <script src="js/utils.js"></script>
   <script src="js/dashboard.js"></script>
+  <script src="js/profile.js"></script>
 </body>
 </html>
