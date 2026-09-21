@@ -656,3 +656,12 @@ button { font-family: var(--font-body); cursor: pointer; }
 .profile-name:focus {
   border-bottom: 1px solid rgba(255, 255, 255, 0.5);
 }
+/* Smooth button hover effect */
+button {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+}
